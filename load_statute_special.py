@@ -1,7 +1,7 @@
 #! C:\python27
 import re, urllib, pickle
 
-def read_statute(theURL):
+def read_statute_special(theURL):
     theStatuteNumber = theURL.split(u'&Statute=')[1]
 
     #theText = theFakeURL #comment this out and uncomment below line when ready to go live
@@ -20,9 +20,7 @@ def read_statute(theURL):
     theText = re.sub(r'<BR>|<br>', r'\n', theText)
     theText = re.sub("<p>", r'\n', theText)
     theText = re.sub(r" +", " ", theText) # Turn all multiple spaces into a single space
-    if len(theTitle) == 0:
-        theTitle = 'NO_TITLE'
-    elif theText.find("Repealed by") != -1:
+    if theText.find("Repealed by") != -1:
         theTitle = "Repealed."
     elif theText.find("Supereseded") != -1:
         theTitle = "Supereseded."
@@ -39,10 +37,10 @@ def read_statute(theURL):
     return theStatuteNumber, theText, theTitle
 
 theWebStatute = {}
-#theWebStatute['35-4-2.10'] = read_statute('http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=35-4-2.10', '35-4-2.10')
-#theWebStatute['34A-3A-6'] = read_statute('http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=34A-3A-6')
+#theWebStatute['35-4-2.10'] = read_statute_special('http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=35-4-2.10', '35-4-2.10')
+#theWebStatute['34A-3A-6'] = read_statute_special('http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=34A-3A-6')
 
-theStatNum, theStatText, theStatTitle = read_statute('http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=35-5-3.1')
+theStatNum, theStatText, theStatTitle = read_statute_special('http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=35-5-3.1')
 print theStatNum
 print theStatText
 print theStatTitle
