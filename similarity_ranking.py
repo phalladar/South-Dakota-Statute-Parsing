@@ -19,4 +19,4 @@ web = pickle.load(open("halp.p"))
 ddisk = pickle.load(open("ddisk.p"))
 
 for key in ddisk:
-	print ddisk[key]['ddisk_title']
+	print key
