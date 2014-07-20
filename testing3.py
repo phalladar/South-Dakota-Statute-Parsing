@@ -1,8 +1,11 @@
-import re
+import pickle
 
-test = u"http://legis.sd.gov/Statutes/Codified_Laws/DisplayStatute.aspx?Type=Statute&Statute=42.1.352"
+# visitedDict = pickle.load(open("in_progress.p", "rb")) # webpage load
 
-def urlToTitle(theURL):
-	return theURL.split('=')[2]
+# for key in visitedDict:
+# 	print key + ": " + visitedDict[key]['title']
 
-print urlToTitle(test)
+ddiskDict = pickle.load(open("ddisk.p", "rb"))
+
+for key in ddiskDict:
+	print ddiskDict[key].decode('utf-8', 'ignore')

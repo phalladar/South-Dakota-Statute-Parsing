@@ -3,7 +3,7 @@ import re, urllib, pickle
 
 def read_statute_special(theURL):
     theStatuteNumber = theURL.split(u'&Statute=')[1]
-
+    
     #theText = theFakeURL #comment this out and uncomment below line when ready to go live
     theText = urllib.urlopen(theURL).read()
     theBodyText = re.findall(ur'<HEAD>(.*)<\/HEAD>', theText, re.DOTALL)
@@ -25,7 +25,7 @@ def read_statute_special(theURL):
     elif theText.find("Supereseded") != -1:
         theTitle = "Supereseded."
     elif theText.find("Obsolete") != -1:
-        theTitle = "Obsolete."
+        theTitle = "Obsolete."2147
     elif theText.find("Repealed") != -1:
         theTitle = "Repealed."
     elif theText.find("Omitted") != -1:

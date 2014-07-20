@@ -144,76 +144,102 @@ def startCrawlingNext(website):
 	activeStatutes.remove(website)
 
 def read_statute(theURL):
-    theStatuteNumber = theURL.split(u'&Statute=')[1]
-
-    #theText = theFakeURL #comment this out and uncomment below line when ready to go live
-    theText = urllib.urlopen(theURL).read()
-    theBodyText = re.findall(ur'<HEAD>(.*)<\/HEAD>', theText, re.DOTALL)
-
-    theTitle =  re.findall(r'<title>(.*\.)\s*<\/title>', theText)
-
-    theBodyText = re.findall(ur'<BODY>(.*)<\/BODY>', theText, re.DOTALL)
-    theText = re.sub("&nbsp;", " ", theBodyText[0])
-    theText = re.sub(r'(\d*[A-Z]?-\d*[A-Z]?-\d[\.\d]*)', r"\1 ", theText, re.DOTALL)
-    theText = re.sub('<!-- WP Style Open: IN -->    <!-- WP Style End: IN -->', " ", theText) # account for indents
-    theText = re.sub(r'\<!--.*-->', "", theText)
-    theText = re.sub(r'<Div.*\">', "", theText) # clear the div
-    theText = re.sub(r'\n|<b>|</b>|\r', " ", theText) # remove the newlines
-    theText = re.sub(r'<BR>|<br>', r'\n', theText)
-    theText = re.sub("<p>", r'\n', theText)
-    theText = re.sub(r" +", " ", theText) # Turn all multiple spaces into a single space
-    if len(theTitle) == 0:
-        theTitle = 'NO_TITLE'
-    elif theText.find("Repealed by") != -1:
-        theTitle = "Repealed."
-    elif theText.find("Supereseded") != -1:
-        theTitle = "Supereseded."
-    elif theText.find("Obsolete") != -1:
-        theTitle = "Obsolete."
-    elif theText.find("Repealed") != -1:
-        theTitle = "Repealed."
-    elif theText.find("Omitted") != -1:
-        theTitle = "Omitted."
-    else:
-        theTitle = theTitle[0][(len(theStatuteNumber) + 1):] # Get rid of the leading statute number and proceeding space
-
-	return theStatuteNumber, theText, theTitle
-
-def read_statute_special(theURL):
 	theStatuteNumber = theURL.split(u'&Statute=')[1]
+	if visitedDict[theStatuteNumber]['title'] == 'PLACEHOLDER': # if we haven't read it yet
 
-	#theText = theFakeURL #comment this out and uncomment below line when ready to go live
-	theText = urllib.urlopen(theURL).read()
-	theBodyText = re.findall(ur'<HEAD>(.*)<\/HEAD>', theText, re.DOTALL)
+		theText = urllib.urlopen(theURL).read()
+		theBodyText = re.findall(ur'<HEAD>(.*)<\/HEAD>', theText, re.DOTALL)
 
-	theTitle =  re.findall(r'<title>(.*\.)\s*<\/title>', theText)
+		theTitle =  re.findall(r'<title>(.*\.)\s*<\/title>', theText)
 
-	theBodyText = re.findall(ur'<BODY>(.*)<\/BODY>', theText, re.DOTALL)
-	theText = re.sub("&nbsp;", " ", theBodyText[0])
-	theText = re.sub(r'(\d*[A-Z]?-\d*[A-Z]?-\d[\.\d]*)', r"\1 ", theText, re.DOTALL)
-	theText = re.sub('<!-- WP Style Open: IN -->    <!-- WP Style End: IN -->', " ", theText) # account for indents
-	theText = re.sub(r'\<!--.*-->', "", theText)
-	theText = re.sub(r'<Div.*\">', "", theText) # clear the div
-	theText = re.sub(r'\n|<b>|</b>|\r', " ", theText) # remove the newlines
-	theText = re.sub(r'<BR>|<br>', r'\n', theText)
-	theText = re.sub("<p>", r'\n', theText)
-	theText = re.sub(r" +", " ", theText) # Turn all multiple spaces into a single space
-	if theText.find("Repealed by") != -1:
-		theTitle = "Repealed."
-	elif theText.find("Supereseded") != -1:
-		theTitle = "Supereseded."
-	elif theText.find("Obsolete") != -1:
-		theTitle = "Obsolete."
-	elif theText.find("Repealed") != -1:
-		theTitle = "Repealed."
-	elif theText.find("Omitted") != -1:
-		theTitle = "Omitted."
+		theBodyText = re.findall(ur'<BODY>(.*)<\/BODY>', theText, re.DOTALL)
+		theText = re.sub("&nbsp;", " ", theBodyText[0])
+		theText = re.sub(r'(\d*[A-Z]?-\d*[A-Z]?-\d[\.\d]*)', r"\1 ", theText, re.DOTALL)
+		theText = re.sub('<!-- WP Style Open: IN -->    <!-- WP Style End: IN -->', " ", theText) # account for indents
+		theText = re.sub(r'\<!--.*-->', "", theText)
+		theText = re.sub(r'<Div.*\">', "", theText) # clear the div
+		theText = re.sub(r'\n|<b>|</b>|\r', " ", theText) # remove the newlines
+		theText = re.sub(r'<BR>|<br>', r'\n', theText)
+		theText = re.sub("<p>", r'\n', theText)
+		theText = re.sub(r" +", " ", theText) # Turn all multiple spaces into a single space
+		if len(theTitle) == 0:
+			# if theText.find("Repealed by") != -1:
+			# 	theTitle = "Repealed."
+			# elif theText.find("Superseded") != -1:
+			# 	theTitle = "Superseded."
+			# elif theText.find("Obsolete") != -1:
+			# 	theTitle = "Obsolete."
+			# elif theText.find("Repealed") != -1:
+			# 	theTitle = "Repealed."
+			# elif theText.find("Transferred") != -1:
+			# 	theTitle = "Transferred."
+			# elif theText.find("Reserved") != -1:  # UNCOMMENT WHEN FINAL
+			# 	theTitle = "Reserved."
+			# elif theText.find("Rejected") != -1:
+			# 	theTitle = "Rejected."
+			# elif theText.find("Omitted") != -1:
+			# 	theTitle = "Omitted."
+			# elif theText.find("implemented") != -1:
+			# 	theTitle = "Not."
+			# elif theText.find("Executed") != -1:
+			# 	theTitle = "Executed."
+			# else:
+			# 	theTitle = "ERROR"
+			theTitle = 'NO_TITLE'
+		else:
+			theTitle = theTitle[0][(len(theStatuteNumber) + 1):] # Get rid of the leading statute number and proceeding space
+
+		return theStatuteNumber, theText, theTitle
+
+	elif visitedDict[theStatuteNumber]['title'] == 'ERROR': # move above to if len(theTitle) line after..
+		theText = urllib.urlopen(theURL).read()
+		theBodyText = re.findall(ur'<HEAD>(.*)<\/HEAD>', theText, re.DOTALL)
+
+		theTitle =  re.findall(r'<title>(.*\.)\s*<\/title>', theText)
+
+		theBodyText = re.findall(ur'<BODY>(.*)<\/BODY>', theText, re.DOTALL)
+		theText = re.sub("&nbsp;", " ", theBodyText[0])
+		theText = re.sub(r'(\d*[A-Z]?-\d*[A-Z]?-\d[\.\d]*)', r"\1 ", theText, re.DOTALL)
+		theText = re.sub('<!-- WP Style Open: IN -->    <!-- WP Style End: IN -->', " ", theText) # account for indents
+		theText = re.sub(r'\<!--.*-->', "", theText)
+		theText = re.sub(r'<Div.*\">', "", theText) # clear the div
+		theText = re.sub(r'\n|<b>|</b>|\r', " ", theText) # remove the newlines
+		theText = re.sub(r'<BR>|<br>', r'\n', theText)
+		theText = re.sub("<p>", r'\n', theText)
+		theText = re.sub(r" +", " ", theText) # Turn all multiple spaces into a single space
+		if theText.find("Repealed by") != -1:
+			theTitle = "Repealed."
+		elif theText.find("Superseded") != -1:
+			theTitle = "Superseded."
+		elif theText.find("Obsolete") != -1:
+			theTitle = "Obsolete."
+		elif theText.find("Repealed") != -1:
+			theTitle = "Repealed."
+		elif theText.find("Transferred") != -1:
+			theTitle = "Transferred."
+		elif theText.find("Reserved") != -1:
+			theTitle = "Reserved."
+		elif theText.find("Rejected") != -1:
+			theTitle = "Rejected."
+		elif theText.find("Omitted") != -1:
+			theTitle = "Omitted."
+		elif theText.find("implemented") != -1:
+			theTitle = "Not."
+		elif theText.find("Executed") != -1:
+			theTitle = "Executed."
+		else:
+			theTitle = "ERROR"
+
+		return theStatuteNumber, theText, theTitle
+
 	else:
-		theTitle = theTitle[0][(len(theStatuteNumber) + 1):] # Get rid of the leading statute number and proceeding space
+		print "Already completed " + theStatuteNumber + '. Skippinng...'
+		theStatuteNumber = ""
+		theText = ""
+		theTitle = ""
+		return theStatuteNumber, theText, theTitle
 
-	return theStatuteNumber, theText, theTitle
-
-WHATTODO = 'ANALYZE'
+WHATTODO = 'PARSE'
 
 if WHATTODO == 'SCRAPE':
 	theOldURL = 'http://legis.sd.gov/Statutes/Codified_Laws/default.aspx'
@@ -247,7 +273,7 @@ if WHATTODO == 'SCRAPE':
 	#print visitedDict
 
 elif WHATTODO == 'PARSE':
-	visitedDict = pickle.load(open("statute-list.p", "rb"))
+	visitedDict = pickle.load(open("in_progress.p", "rb"))
 	#print read_statute(visitedDict['34A-3A-6']['url'])
 	#theWebStatuteText = visitedDict
 
@@ -257,9 +283,9 @@ elif WHATTODO == 'PARSE':
 		if len(visitedDict[key]['url'].split("-")) > 2:
 			# ^-- Only repealed Chapters and Statutes (3+ levels out) have text to capture
 			theStatNum, theStatText, theStatTitle = read_statute(visitedDict[key]['url'])
-			visitedDict[key]['web_text'] = theStatText
-			visitedDict[key]['title'] = theStatTitle
-			print "Completed " + key
+			if theStatText != "": visitedDict[key]['web_text'] = theStatText
+			if theStatTitle != "": visitedDict[key]['title'] = theStatTitle
+			#print "Completed " + key
 			#pickle.dump( visitedDict, open("in_progress.p", "wb"))
 		else:
 			visitedDict[key]['web_text'] = 'NONE'
@@ -274,10 +300,10 @@ elif WHATTODO == 'ANALYZE':
 	#for key in visitedDict:
 		#print key + ': ' + visitedDict[key]['title']
 
-	for key, value in visitedDict.items():
-		if value['title'] == 'NO_TITLE':
-			#print key + ': ' + value['title']
-			theStatNum, theStatText, theStatTitle = read_statute_special(visitedDict[value]['url'])
-			visitedDict[value]['title'] = theStatTitle
+	# for key, value in visitedDict.items():
+	# 	if value['title'] == 'NO_TITLE':
+	# 		#print key + ': ' + value['title']
+	# 		theStatNum, theStatText, theStatTitle = read_statute_special(value['url'])
+	# 		visitedDict[value]['title'] = theStatTitle
 
 	pickle.dump( visitedDict, open("special.p", "wb"))
