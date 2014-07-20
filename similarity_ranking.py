@@ -1,4 +1,4 @@
-import difflib
+import difflib, pickle
 
 def compareText(ddisk, website):
 	seq = difflib.SequenceMatcher(None, ddisk, website)
@@ -15,6 +15,8 @@ b = '34A-3A-6. Exemption of public water supply systems--Requirements. The secre
 c = ' 35-4-2.10. Repealed by SL 2009, ch 177, \xa7 8.\n'
 d = ' 35-4-2.10. Repealed by SL 2009, ch 177, &#167; 8.\n '
 
-print compareText(a, b)
-print compareText(c, d)
-print findDifferences(c, b).decode('utf-8', 'ignore')
+web = pickle.load(open("halp.p"))
+ddisk = pickle.load(open("ddisk.p"))
+
+for key in ddisk:
+	print ddisk[key]['ddisk_title']
