@@ -1,6 +1,9 @@
 # coding=utf-8
-
 import re, urllib, htmlentitydefs
+
+def urlToNumber(theURL):
+	# Take the URL as input and return the section from it
+	return theURL.split('=')[2] 
 
 def unescape(text):
     def fixup(m):
@@ -108,34 +111,61 @@ def convertAlpha(alpha):
 		return 1.0 / 2
 	return 0 # if there's no alpha associated return 0
 
-def startCrawling(website):
+def startCrawlingInitial(website):
 	if website != '/':
-		for statuteURL in re.findall('''<A HREF="(/Statutes/Codified_Laws.*Statute=.*)">''', urllib.urlopen(website).read(), re.I):
-			statuteURL = 'http://legis.sd.gov' + statuteURL
-			if statuteURL not in activeStatutes and statuteURL not in visitedStatutes and statuteURL != '/':
-			 	activeStatutes.append(statuteURL)
+		for statuteURL in re.findall('''<A HREF="(\/Statutes\/Codified_Laws.*Statute=.*)">\d+[A-Z]?\<\/A>\..*bsp\;(.*)''', urllib.urlopen(website).read(), re.I):
+			theTitle = statuteURL[1]
+			tempURL = 'http://legis.sd.gov' + statuteURL[0]
+			theSection = urlToNumber(tempURL)
+			visitedDict[theSection] = {
+					'title': re.sub(r'\r', "", theTitle),
+					'url': tempURL
+				}
+			print "visitedDict['" + theSection + "'] = " + str(visitedDict[theSection])
+			if tempURL not in activeStatutes and tempURL not in visitedStatutes and tempURL != '/':
+			 	activeStatutes.append(tempURL)
+	if website not in visitedStatutes: visitedStatutes.append(website)
+	activeStatutes.remove(website)
+
+def startCrawlingNext(website):
+	if website != '/':
+		for statuteURL in re.findall(ur'A HREF="(\/Statutes.*=\d+.*)\"', urllib.urlopen(website).read(), re.I):
+			tempURL = 'http://legis.sd.gov' + statuteURL
+			theSection = urlToNumber(tempURL)
+			visitedDict[theSection] = {
+					'url': tempURL,
+					'added_by': website
+				}
+			print "visitedDict['" + theSection + "'] = " + str(visitedDict[theSection])
+			if tempURL not in activeStatutes and tempURL not in visitedStatutes and tempURL != '/':
+			 	activeStatutes.append(tempURL)
 	if website not in visitedStatutes: visitedStatutes.append(website)
 	activeStatutes.remove(website)
 
 theOldURL = 'http://legis.sd.gov/Statutes/Codified_Laws/default.aspx'
 
 theMin = '34A'
-theMax = '43'
+theMax = '35'
 
 activeStatutes = []
 visitedStatutes = []
+visitedDict = {}
 
 for theNewURL in re.findall('''td\>\<a\shref=\"\/Statutes(.*[^ ]\=(\d*\w*))''', urllib.urlopen(theOldURL).read(), re.I):
 	if isAlphaNumInRange(theNewURL[1], theMin, theMax):
 		activeStatutes.append('http://legis.sd.gov/Statutes' + unescape(theNewURL[0]))
 
 while activeStatutes:
-	if len(activeStatutes[0].split('-')) < 3:
-		startCrawling(activeStatutes[0])
+	print activeStatutes[0]
+	if len(activeStatutes[0].split('-')) == 1:
+		startCrawlingInitial(activeStatutes[0])
+	elif len(activeStatutes[0].split('-')) == 2:
+		startCrawlingNext(activeStatutes[0])
+		#print "MADE IT\n\n\n\n\n\n\n\n"
 	else:
  		#getStatuteContent(activeStatutes[0])
-		if activeStatutes[0] not in visitedStatutes: visitedStatutes.append(activeStatutes[0])
-	print "Finished processing: " + activeStatutes[0]
-	activeStatutes.remove(activeStatutes[0])
+		#if activeStatutes[0] not in visitedStatutes: visitedStatutes.append(activeStatutes[0])
+		print "Not webcrawling"
+		activeStatutes.remove(activeStatutes[0])
 
-print visitedStatutes
+print visitedDict
