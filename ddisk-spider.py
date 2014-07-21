@@ -239,13 +239,13 @@ def read_statute(theURL):
 		theTitle = ""
 		return theStatuteNumber, theText, theTitle
 
-WHATTODO = 'PARSE'
+WHATTODO = 'SCRAPE'
 
 if WHATTODO == 'SCRAPE':
 	theOldURL = 'http://legis.sd.gov/Statutes/Codified_Laws/default.aspx'
 
 	theMin = '1'
-	theMax = '34'
+	theMax = '62'
 
 	activeStatutes = []
 	visitedStatutes = []
@@ -265,7 +265,7 @@ if WHATTODO == 'SCRAPE':
 		else:
 			activeStatutes.remove(activeStatutes[0])
 
-	pickle.dump( visitedDict, open("big-statute-list.p", "wb"))
+	pickle.dump( visitedDict, open("1-62-statutes.p", "wb"))
 	#print visitedDict
 
 elif WHATTODO == 'PARSE':
