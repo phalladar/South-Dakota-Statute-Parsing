@@ -163,35 +163,35 @@ def read_statute(theURL):
 		theText = re.sub("<p>", r'\n', theText)
 		theText = re.sub(r" +", " ", theText) # Turn all multiple spaces into a single space
 		if len(theTitle) == 0:
-			# if theText.find("Repealed by") != -1:
-			# 	theTitle = "Repealed."
-			# elif theText.find("Superseded") != -1:
-			# 	theTitle = "Superseded."
-			# elif theText.find("Obsolete") != -1:
-			# 	theTitle = "Obsolete."
-			# elif theText.find("Repealed") != -1:
-			# 	theTitle = "Repealed."
-			# elif theText.find("Transferred") != -1:
-			# 	theTitle = "Transferred."
-			# elif theText.find("Reserved") != -1:  # UNCOMMENT WHEN FINAL
-			# 	theTitle = "Reserved."
-			# elif theText.find("Rejected") != -1:
-			# 	theTitle = "Rejected."
-			# elif theText.find("Omitted") != -1:
-			# 	theTitle = "Omitted."
-			# elif theText.find("implemented") != -1:
-			# 	theTitle = "Not."
-			# elif theText.find("Executed") != -1:
-			# 	theTitle = "Executed."
-			# else:
-			# 	theTitle = "ERROR"
+			if theText.find("Repealed by") != -1:
+				theTitle = "Repealed."
+			elif theText.find("Superseded") != -1:
+				theTitle = "Superseded."
+			elif theText.find("Obsolete") != -1:
+				theTitle = "Obsolete."
+			elif theText.find("Repealed") != -1:
+				theTitle = "Repealed."
+			elif theText.find("Transferred") != -1:
+				theTitle = "Transferred."
+			elif theText.find("Reserved") != -1:  # UNCOMMENT WHEN FINAL
+				theTitle = "Reserved."
+			elif theText.find("Rejected") != -1:
+				theTitle = "Rejected."
+			elif theText.find("Omitted") != -1:
+				theTitle = "Omitted."
+			elif theText.find("implemented") != -1:
+				theTitle = "Not."
+			elif theText.find("Executed") != -1:
+				theTitle = "Executed."
+			else:
+				theTitle = "ERROR"
 			theTitle = 'NO_TITLE'
 		else:
 			theTitle = theTitle[0][(len(theStatuteNumber) + 1):] # Get rid of the leading statute number and proceeding space
 
 		return theStatuteNumber, theText, theTitle
 
-	elif visitedDict[theStatuteNumber]['title'] == 'ERROR': # move above to if len(theTitle) line after..
+	elif visitedDict[theStatuteNumber]['title'] == 'NO_TITLE': # move above to if len(theTitle) line after..
 		theText = urllib.urlopen(theURL).read()
 		theBodyText = re.findall(ur'<HEAD>(.*)<\/HEAD>', theText, re.DOTALL)
 
@@ -239,13 +239,13 @@ def read_statute(theURL):
 		theTitle = ""
 		return theStatuteNumber, theText, theTitle
 
-WHATTODO = 'PARSE'
+WHATTODO = 'SCRAPE'
 
 if WHATTODO == 'SCRAPE':
 	theOldURL = 'http://legis.sd.gov/Statutes/Codified_Laws/default.aspx'
 
-	theMin = '34A'
-	theMax = '43'
+	theMin = '1'
+	theMax = '34'
 
 	activeStatutes = []
 	visitedStatutes = []
@@ -262,18 +262,14 @@ if WHATTODO == 'SCRAPE':
 			startCrawlingInitial(activeStatutes[0])
 		elif len(activeStatutes[0].split('-')) == 2:
 			startCrawlingNext(activeStatutes[0])
-			#print "MADE IT\n\n\n\n\n\n\n\n"
 		else:
-	 		#getStatuteContent(activeStatutes[0])
-			#if activeStatutes[0] not in visitedStatutes: visitedStatutes.append(activeStatutes[0])
-			#print "Not webcrawling"
 			activeStatutes.remove(activeStatutes[0])
 
-	pickle.dump( visitedDict, open("statute-list.p", "wb"))
+	pickle.dump( visitedDict, open("big-statute-list.p", "wb"))
 	#print visitedDict
 
 elif WHATTODO == 'PARSE':
-	visitedDict = pickle.load(open("in_progress.p", "rb"))
+	visitedDict = pickle.load(open("halp.p"))
 	#print read_statute(visitedDict['34A-3A-6']['url'])
 	#theWebStatuteText = visitedDict
 
