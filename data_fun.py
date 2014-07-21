@@ -1,6 +1,9 @@
 # coding=utf-8
 import re, pprint, pickle
 
-fun = pickle.load(open("similar_dict.p"))
+ddisk = pickle.load(open("ddisk2.p"))
+web = pickle.load(open('tagged-statutes-1-34.p'))
 
-print sorted(fun.items(), key=lambda x: x[1])
+theStatute = '9-16-5.7'
+print ddisk[theStatute]['ddisk_title']
+print web[theStatute]['title']
