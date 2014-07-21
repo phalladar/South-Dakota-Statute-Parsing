@@ -121,7 +121,7 @@ def startCrawlingInitial(website):
 					'title': re.sub(r'\r', "", theTitle),
 					'url': tempURL
 				}
-			#print "visitedDict['" + theSection + "'] = " + str(visitedDict[theSection])
+			print "visitedDict['" + theSection + "'] = " + str(visitedDict[theSection])
 			if tempURL not in activeStatutes and tempURL not in visitedStatutes and tempURL != '/':
 			 	activeStatutes.append(tempURL)
 	if website not in visitedStatutes: visitedStatutes.append(website)
@@ -137,7 +137,7 @@ def startCrawlingNext(website):
 						'url': tempURL,
 						'title': 'PLACEHOLDER'
 					}
-				#print "visitedDict['" + theSection + "'] = " + str(visitedDict[theSection])
+				print "visitedDict['" + theSection + "'] = " + str(visitedDict[theSection])
 				if tempURL not in activeStatutes and tempURL not in visitedStatutes and tempURL != '/':
 				 	activeStatutes.append(tempURL)
 	if website not in visitedStatutes: visitedStatutes.append(website)
@@ -239,7 +239,7 @@ def read_statute(theURL):
 		theTitle = ""
 		return theStatuteNumber, theText, theTitle
 
-WHATTODO = 'SCRAPE'
+WHATTODO = 'PARSE'
 
 if WHATTODO == 'SCRAPE':
 	theOldURL = 'http://legis.sd.gov/Statutes/Codified_Laws/default.aspx'
@@ -269,7 +269,7 @@ if WHATTODO == 'SCRAPE':
 	#print visitedDict
 
 elif WHATTODO == 'PARSE':
-	visitedDict = pickle.load(open("halp.p"))
+	visitedDict = pickle.load(open("big-statute-list.p"))
 	#print read_statute(visitedDict['34A-3A-6']['url'])
 	#theWebStatuteText = visitedDict
 
@@ -281,14 +281,14 @@ elif WHATTODO == 'PARSE':
 			theStatNum, theStatText, theStatTitle = read_statute(visitedDict[key]['url'])
 			if theStatText != "": visitedDict[key]['web_text'] = theStatText
 			if theStatTitle != "": visitedDict[key]['title'] = theStatTitle
-			#print "Completed " + key
+			print "Completed " + key
 			#pickle.dump( visitedDict, open("in_progress.p", "wb"))
 		else:
 			visitedDict[key]['web_text'] = 'NONE'
 			print "Skipped " + key
 			#pickle.dump( visitedDict, open("in_progress.p", "wb"))
 	
-	pickle.dump( visitedDict, open("in_progress.p", "wb"))
+	pickle.dump( visitedDict, open("tagged-statutes-1-34.p", "wb"))
 
 elif WHATTODO == 'ANALYZE':
 	visitedDict = pickle.load(open("in_progress.p"))
