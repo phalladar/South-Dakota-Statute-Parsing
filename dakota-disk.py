@@ -12,7 +12,7 @@ tempArray = []
 
 theTitles = re.findall(r"\n(\d*[A-Z]?-\d*[A-Z]?-\d*[\.\d]*[A-Z]?[-\d*[\.\d]*[A-Z]?]?[\w\(\)]*)(?:\t|\sto|\,)?.*\t(.*\.?)", theString, re.MULTILINE) # find statute titles from headings
 for k in theTitles:
-	ddisk_dict[k[0]] = { 'ddisk_title': k[1],
+	ddisk_dict[k[0].upper()] = { 'ddisk_title': k[1],
 						  'ddisk_text': None }
 	#print k[0]
 
@@ -23,13 +23,13 @@ grabStatutes = re.findall(r'^(\d+[\w+]?-(?:\d+[\w+]?-\d+[\w+]?-\d+[\w+]?)?(?:[,.
 for i in grabStatutes:
 	try:
 		theSection = re.findall(r'(\d+\w?-\d+[-0-9A-Z\.]*)(?:\s|\,)', i)
-		theRealSection = theSection[0]
+		theRealSection = theSection[0].upper()
 		theText = re.sub(r'\d*[A-Z]?-\d*[A-Z]?-\d[\.\d]*.*\n\t +', "", i)
 		ddisk_dict[theRealSection]['ddisk_text'] = theText
 		#print theSection[0]
 	except Exception:
 		theSection = re.findall(r'(\d*[A-Z]?-\d*[A-Z]?-\d*[\.\d]*[A-Z]?[-\d*[\.\d]*[A-Z]?]?[\w\(\)]*)(?:\t|\sto|\,)?', i)
-		theRealSection = theSection[0]
+		theRealSection = theSection[0].upper()
 		print theRealSection
 		
 # Use the below to test specific statutes

@@ -1,4 +1,4 @@
-import difflib, pickle
+import difflib, pickle, HTMLParser
 
 def compareText(ddisk, website):
 	seq = difflib.SequenceMatcher(None, ddisk, website)
@@ -18,7 +18,7 @@ d = ' 35-4-2.10. Repealed by SL 2009, ch 177, &#167; 8.\n '
 
 statutetoCompare = '34A-3A-6'
 
-web = pickle.load(open("web_complete.p"))
+web = pickle.load(open("tagged-statutes-1-34.p"))
 ddisk = pickle.load(open("ddisk2.p"))
 
 # print ddisk[statutetoCompare]['ddisk_text']
@@ -30,11 +30,18 @@ ddisk = pickle.load(open("ddisk2.p"))
 for i in web:
 	#print i, web[i]['title']
 	try:
-		bigDict[i] = { 'web_text': web[i]['web_text'],
-					   'web_title': web[i]['title'],
+		if web[i]['title'].find('...') != -1:
+			theDDiskTitle = ddisk[i]['ddisk_title'][:web[i]['title'].find('...')] + '...'
+		else:
+			theDDiskTitle = ddisk[i]['ddisk_title']
+
+		htmlConvert = HTMLParser.HTMLParser() # convert HTML reminants
+
+		bigDict[i] = { 'web_text': htmlConvert.unescape(web[i]['web_text']),
+					   'web_title': htmlConvert.unescape(web[i]['title']),
 					   'url': web[i]['url'],
 					   'ddisk_text': ddisk[i]['ddisk_text'],
-					   'ddisk_title': ddisk[i]['ddisk_title'],
+					   'ddisk_title': theDDiskTitle,
 					   'text_similar': None,
 					   'title_similar': None }
 	except Exception:
@@ -49,6 +56,6 @@ for j in bigDict:
 		print 'Compare error in ' + str(j)
 
 
-print bigDict['36-21A-59']
+#print bigDict['36-21A-59']
 
-pickle.dump( bigDict, open("similar_dict.p", "wb"))
+pickle.dump( bigDict, open("similar-dict-1-34.p", "wb"))
