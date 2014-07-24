@@ -1,4 +1,5 @@
-import difflib, pickle, HTMLParser
+ # coding=utf-8
+import difflib, pickle, HTMLParser, re
 
 def compareText(ddisk, website):
 	seq = difflib.SequenceMatcher(None, ddisk, website)
@@ -36,11 +37,16 @@ for i in web:
 			theDDiskTitle = ddisk[i]['ddisk_title']
 
 		htmlConvert = HTMLParser.HTMLParser() # convert HTML reminants
+		web_text = htmlConvert.unescape(web[i]['web_text']).encode("utf-8") # corrections for encoding problems
+		web_text = re.sub(r'Â', "", web_text).strip()
+		ddisk_text = ddisk[i]['ddisk_text']
+		ddisk_text = re.sub(r'\s\s\s\s*Source\:', "", ddisk_text).strip()
+		ddisk_text = re.sub(r'\.Source', r'.  Source', ddisk_text)
 
-		bigDict[i] = { 'web_text': htmlConvert.unescape(web[i]['web_text']).encode("utf-8"),
+		bigDict[i] = { 'web_text': web_text,
 					   'web_title': htmlConvert.unescape(web[i]['title']).encode("utf-8"),
 					   'url': web[i]['url'],
-					   'ddisk_text': ddisk[i]['ddisk_text'],
+					   'ddisk_text': ddisk_text,
 					   'ddisk_title': theDDiskTitle,
 					   'text_similar': None,
 					   'title_similar': None }
