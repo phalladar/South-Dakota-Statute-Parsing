@@ -18,7 +18,7 @@ d = ' 35-4-2.10. Repealed by SL 2009, ch 177, &#167; 8.\n '
 
 statutetoCompare = '34A-3A-6'
 
-web = pickle.load(open("tagged-statutes-1-34.p"))
+web = pickle.load(open("web_complete.p"))
 ddisk = pickle.load(open("ddisk2.p"))
 
 # print ddisk[statutetoCompare]['ddisk_text']
@@ -37,8 +37,8 @@ for i in web:
 
 		htmlConvert = HTMLParser.HTMLParser() # convert HTML reminants
 
-		bigDict[i] = { 'web_text': htmlConvert.unescape(web[i]['web_text']),
-					   'web_title': htmlConvert.unescape(web[i]['title']),
+		bigDict[i] = { 'web_text': htmlConvert.unescape(web[i]['web_text']).encode("utf-8"),
+					   'web_title': htmlConvert.unescape(web[i]['title']).encode("utf-8"),
 					   'url': web[i]['url'],
 					   'ddisk_text': ddisk[i]['ddisk_text'],
 					   'ddisk_title': theDDiskTitle,
@@ -58,4 +58,4 @@ for j in bigDict:
 
 #print bigDict['36-21A-59']
 
-pickle.dump( bigDict, open("similar-dict-1-34.p", "wb"))
+pickle.dump( bigDict, open("similar-dict-34a-43.p", "wb"))
