@@ -39,9 +39,13 @@ for i in web:
 		htmlConvert = HTMLParser.HTMLParser() # convert HTML reminants
 		web_text = htmlConvert.unescape(web[i]['web_text']).encode("utf-8") # corrections for encoding problems
 		web_text = re.sub(r'Â', "", web_text).strip()
+		web_text = re.sub('\xc2', "", web_text).strip()
+	
 		ddisk_text = ddisk[i]['ddisk_text']
 		ddisk_text = re.sub(r'\s\s\s\s*Source\:', "", ddisk_text).strip()
 		ddisk_text = re.sub(r'\.Source', r'.  Source', ddisk_text)
+		if i == '35-4-97':
+			print web_text
 
 		bigDict[i] = { 'web_text': web_text,
 					   'web_title': htmlConvert.unescape(web[i]['title']).encode("utf-8"),
@@ -56,12 +60,14 @@ for i in web:
 
 for j in bigDict:
 	try:
+		if j == '35-4-97':
+			print bigDict[j]['web_text']
 	 	bigDict[j]['text_similar'] = compareText(bigDict[j]['web_text'], bigDict[j]['ddisk_text'])
 	 	bigDict[j]['title_similar'] = compareText(bigDict[j]['web_title'], bigDict[j]['ddisk_title'])
 	except Exception:
 		print 'Compare error in ' + str(j)
 
 
-#print bigDict['36-21A-59']
+print bigDict['35-4-97']['web_text']
 
-pickle.dump( bigDict, open("similar-dict-34a-43.p", "wb"))
+pickle.dump( bigDict, open("similar-dict-34a-43-NEW.p", "wb"))
